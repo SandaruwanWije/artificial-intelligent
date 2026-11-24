@@ -1,20 +1,16 @@
 [project]
 name = "artificial-intelligent"
 version = "0.1.0"
-description = "Hands-on AI/ML learning path: from-scratch ML to LLM systems and agents"
+description = "Companion code for the AI articles on byteblueprints.com"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "numpy",
-    "pandas",
     "matplotlib",
-    "scikit-learn",
 ]
 
 [dependency-groups]
 dev = [
-    "jupyterlab",
-    "ipykernel",
     "pytest",
 ]
 
