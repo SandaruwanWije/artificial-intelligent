@@ -22,5 +22,9 @@ dev = [
 package = false
 
 [tool.pytest.ini_options]
+# Run from the repo root, so every project imports as a package: ai_01_perceptron.gates
+pythonpath = ["."]
 testpaths = ["."]
 python_files = ["test_*.py"]
+addopts = "--import-mode=importlib"
+norecursedirs = [".venv", ".git", "images"]
