@@ -1,94 +1,90 @@
-# How every project is built
+# How the library is built
 
-Each `ai_NN_*` folder is the companion code for one article on
-[byteblueprints.com](https://byteblueprints.com). Folders are numbered in the
-order they were built; that need not match the article numbers.
-`ai_01_perceptron` is the reference: when in doubt, do what it does.
+The repo is one small neural network library. Each new article adds the piece
+it teaches. Nothing else goes in: no pictures, no printed reports, no programs
+to run. The tests are how you see a piece work.
 
 ## Layout
 
 ```
-ai_NN_topic/
-  __init__.py      empty
-  __main__.py      the article as a program: one function per chapter, then the pictures
-  <model>.py       the idea itself, as small classes (one file per concept)
-  report.py        turns results into printed lines; never does maths
-  figures.py       turns results into pictures; never does maths
-  images/          the pictures it saves (committed, the article uses them)
-  tests/test_<topic>.py   the article's numbers, checked
-  README.md        what it shows, how to run it, file table, link to the article
-common/theme.py    the blog's colours and plot helpers, shared by every project
+neural_network/
+  <idea>/
+    __init__.py     imports the idea's classes, so users write
+                    from neural_network.<idea> import <Class>
+    <idea>.py       the classes
+    README.md       what the idea is, its classes, a short example, its test file
+tests/
+  conftest.py       shared test networks (the mango network)
+  test_<idea>.py    one file per idea, using the real pieces together
+tools/
+  check_article.py  checks a blog post's Project tab against the code
 ```
 
-Run a project from the repo root with `uv run python -m ai_NN_topic`, and
-every test with `uv run pytest`.
+## Classes
 
-## Code
+- **Every idea is a class named after it**: `Neuron`, `Perceptron`,
+  `Activation`, `Network`, `ForwardPass`, `Loss`, `GradientDescent`,
+  `Backpropagation`, `Trainer`. Its methods are what the idea does
+  (`total`, `output`, `guess`, `learn`, `slope`, `step`).
+- **Build on the pieces that are already there.** A `Perceptron` is a
+  `Neuron` with the `Step`. A `Network` is made of `Layer`s of `Neuron`s.
+  `Trainer` uses `Backpropagation` and `GradientDescent`. Never write a second
+  version of a piece.
+- **Families share a base class.** `Activation` and `Loss` are abstract. A new
+  curve or loss is a new subclass, never an `if` on a name.
+- **Only what the idea needs.** No helpers for printing or drawing, no extra
+  options. Keep each class as small as it can be and still be right.
+- **No loose functions** in the library. Ready made instances are fine
+  (`RELU`, `SIGMOID`).
+- Plain Python lists and `math`. No other packages.
+- **Plain steps, not clever code.** The library is for seeing what happens,
+  not for speed. Use `for` loops with an index, `if`, `append`, and `+ - * /`.
+  Give each in between number a name (`total`, `miss`, `at_total`). No list
+  comprehensions, `sum`, `zip`, `enumerate`, `max`, `**` or one line `if`
+  expressions. `math.exp`, `math.log` and `math.tanh` are fine. A short
+  comment may say what a step means.
+- Easy names a beginner can guess. One line docstring per class. Type hints.
+  Files under about 100 lines.
 
-- **Speak the article's language.** Class, method and variable names use the
-  article's own words (`weights`, `bias`, `total`, `guess`, `answer`, `error`,
-  `learning_rate`, `pass`), and its numbers: the same starting weights, inputs and
-  learning rate, so every printed number can be found in the article.
-- **Small classes with one job.** Values that do not change are
-  `@dataclass(frozen=True)` (`Weights`, `Corner`). Things that act are classes
-  with a few short methods (`Perceptron`, `Trainer`). A result is a dataclass
-  (`TrainingRun`), not a tuple of loose values.
-- **Model, report and figures stay apart.** The model never prints or draws.
-  `report.py` and `figures.py` only read results.
-- **Plain Python first.** Use NumPy only where the article itself talks about
-  vectors or matrices; then name the shapes in comments.
-- **The code explains itself, not comments.** Names say what a thing is or
-  does (`learning_rate`, `wrong_corners`, `after_each_pass`), and short
-  functions say the steps. No comment that repeats what a line does. A module
-  gets at most a one-line docstring; a class or function gets none unless its
-  name truly cannot say it. The rare comment left is a short *why*. The
-  explaining happens in the article's Project tab, around the code.
-- Type hints on every function.
-- No file over ~150 lines. Split along meaning, not to hit a number.
-- No new dependencies: Python 3.12, NumPy and Matplotlib are enough.
+## The code stands on its own
 
-## Pictures
-
-- Draw with `common.theme`: `panels()` for a row of plots, `quiet()` for
-  axes, `save()` to write the PNG. Use `COLORS`, never raw colour codes:
-  `class_0` (plain ink) for answer 0, `accent` (purple) for answer 1 and for
-  what the picture points at, `error` (orange) for wrong answers, losses and
-  slopes.
-- Every picture answers one question the article asks, and its title says
-  what to look at. Prefer a row of small panels to one crowded plot.
-- Write titles and labels in the article's words.
+Anyone should be able to use the library without reading the articles. The
+code and the tests never mention an article, the blog or a chapter. Only
+README files link to the articles.
 
 ## Tests
 
-One test per number the article quotes: a starting value, a step, a final
-result. If the article changes, a failing test says which sentence to fix.
-Tests are for the repo; the article's Project tab does not show them.
+Each idea has `tests/test_<idea>.py`. A test builds the real pieces and checks
+a result someone could work out by hand. Slopes are also checked against a
+tiny nudge. `uv run pytest` must pass before anything is committed.
+
+Tests also show how the piece works inside. A test takes the `show` fixture
+from `tests/conftest.py` and calls it at each step, for example
+`show("after:  weights", perceptron.weights, "bias", perceptron.bias)`.
+Each line is printed under the test's name when the tests run (floats are
+rounded to 4 places). Show the numbers someone would follow by hand: inputs,
+totals, errors, weights before and after. Check the in between numbers with
+`assert` too, not only the last one. `uv run pytest -q` hides the steps.
 
 ## Writing the Project tab
 
-The blog post holds a `<ProjectVersion repo="…/tree/main/ai_NN_topic">`
-block after its `</TextVersion>`. Inside it:
+A blog post holds a `<ProjectVersion>` block after its `</TextVersion>`. It
+explains the library code of the piece the post adds, simply and briefly.
+Tests and how to run them live only in the README files, never in the tab:
+no test code, no test output, no run commands.
 
-1. One short paragraph: what the code is and that it uses the article's numbers.
-2. `## Run it` with the `uv sync` and `uv run python -m ai_NN_topic` commands.
-3. `## How the code is laid out`: a file table, and a sentence on why it is split that way.
-4. Then one section per article chapter, using the chapter's own heading. Each
-   section quotes the important code **word for word** from the repo, says in
-   plain words what it does and why it is written that way, and shows the
-   output that part prints and the picture it draws, placed where the text
-   talks about them.
+1. One or two sentences: which piece this is and what it builds on.
+2. `## Where it is`: a short table of the classes and their files.
+3. `## Walk through the code`: one to five short steps. Each is a bold lead
+   in sentence or two in plain words, then code quoted **word for word** from
+   `neural_network/`. Always show the `class` line a method belongs to: when
+   the method is further down, write the class line, then a line with only
+   `...`, then the method. With only one step, leave out its number.
 
-The tab never mentions tests: no test section, no `tests/` row, no test
-snippet, no `pytest`. Tests live in the repo only.
-
-Pictures are copied into the post's `project/` folder and shown with
-`![alt text that describes the picture](./project/name.png)`.
-
-Check the tab before publishing:
+Plain language: short sentences, everyday words, no idioms, no dashes used
+as punctuation. Then check the tab. Every code block must be found in the
+library:
 
 ```bash
-uv run python tools/check_article.py <path to the post's index.mdx> ai_NN_topic
+uv run python tools/check_article.py <path to the post's index.mdx>
 ```
-
-It fails if any code block is not in the project's files, or any output
-block is not in what the program prints.

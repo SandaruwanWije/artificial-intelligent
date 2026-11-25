@@ -1,13 +1,10 @@
 [project]
 name = "artificial-intelligent"
 version = "0.1.0"
-description = "Companion code for the AI articles on byteblueprints.com"
+description = "A small neural network library in plain Python, built one idea at a time"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "numpy",
-    "matplotlib",
-]
+dependencies = []
 
 [dependency-groups]
 dev = [
@@ -18,9 +15,6 @@ dev = [
 package = false
 
 [tool.pytest.ini_options]
-# Run from the repo root, so every project imports as a package: ai_01_perceptron.gates
 pythonpath = ["."]
-testpaths = ["."]
-python_files = ["test_*.py"]
-addopts = "--import-mode=importlib"
-norecursedirs = [".venv", ".git", "images"]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib -v"
