@@ -1,3 +1,3 @@
-from .forward_pass import ForwardPass, LayerStep
+from .forward_pass import BatchForwardPass, ForwardPass, LayerStep
 
-__all__ = ["ForwardPass", "LayerStep"]
+__all__ = ["BatchForwardPass", "ForwardPass", "LayerStep"]

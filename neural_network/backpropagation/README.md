@@ -18,22 +18,32 @@ more run of the network for every number.
 `Backpropagation(loss).slopes(network, inputs, truths)` finds the same slopes
 in one sweep backwards.
 
-1. Run a `ForwardPass` and keep every layer's step.
+1. Run a forward pass and keep every layer's step.
 2. Start at the loss: `loss.slope` says how the loss moves with each answer.
    This is the blame.
-3. For each layer, from the last one back, `back_through_layer` does this:
+3. For each layer, from the last one back, `back_to_totals` does this:
    - Multiply the blame by the activation's slope at each neuron's total.
      That gives the blame at the total.
    - A weight's slope is the blame at its neuron's total times the input on
      its wire. A bias's slope is the blame at the total itself.
    - Share the blame back to the layer before: each input gets the blame at
-     every total it feeds, times the weight on that wire.
+     every total it feeds, times the weight on that wire. The layer does
+     this itself, in `Layer.blame_on_inputs`.
+
+`slopes` is for one example. It is a batch of one for `slopes_for_each`,
+which takes any batch and returns every example's slopes. There all the
+examples go forward one layer at a time (`BatchForwardPass`) and back one
+layer at a time, so a layer such as `BatchNorm` can look at the whole batch.
 
 `tests/test_backpropagation.py` checks every slope of the sweep against
 `FiniteDifference`. `tests/test_finite_difference.py` nudges one weight by
 0.01 and shows the loss move.
 
-Uses: `forward_pass`, `loss`, `network`. Used by: `training`.
+`Backpropagation(loss, dropout)` takes an optional `Dropout`. It hands it to
+the forward pass, and on the way back it multiplies each neuron's blame by the
+switch the step kept. So a neuron that was off going forward gets slopes of 0.
+
+Uses: `forward_pass`, `loss`, `network`, `dropout`. Used by: `batches`, `gradient_clipping`, `weight_decay`, `training`.
 
 Articles: [Backpropagation part 1](https://byteblueprints.com/artificial-intelligence/ann/10_backprop/) and [part 2](https://byteblueprints.com/artificial-intelligence/ann/10_backprop_2/).
 

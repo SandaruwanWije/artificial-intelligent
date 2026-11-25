@@ -21,7 +21,11 @@ descent.step(-2.2, slope=-2.24)   # -0.408
 A learning rate that is too big jumps past the bottom and climbs out.
 `tests/test_gradient_descent.py` shows both.
 
-Used by: `training`.
+`GradientDescent` is the simplest `Optimizer`. It remembers nothing, so
+`fresh()` returns another one with the same learning rate. The optimizers
+that do remember are in `optimizers`.
+
+Uses: `optimizers`. Used by: `training`.
 
 Article: [Gradient descent](https://byteblueprints.com/artificial-intelligence/ann/09_gradient_descent/).
 

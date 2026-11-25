@@ -14,7 +14,7 @@ neural_network/
     <idea>.py       the classes
     README.md       what the idea is, its classes, a short example, its test file
 tests/
-  conftest.py       shared test networks (the mango network)
+  conftest.py       shared test networks and examples (the mango network, the crates)
   test_<idea>.py    one file per idea, using the real pieces together
 tools/
   check_article.py  checks a blog post's Project tab against the code
@@ -28,21 +28,25 @@ tools/
   (`total`, `output`, `guess`, `learn`, `slope`, `step`).
 - **Build on the pieces that are already there.** A `Perceptron` is a
   `Neuron` with the `Step`. A `Network` is made of `Layer`s of `Neuron`s.
-  `Trainer` uses `Backpropagation` and `GradientDescent`. Never write a second
-  version of a piece.
-- **Families share a base class.** `Activation` and `Loss` are abstract. A new
-  curve or loss is a new subclass, never an `if` on a name.
+  `Trainer` uses `Backpropagation`, `BatchSlopes`, `WeightDecay`,
+  `GradientClipping` and an `Optimizer`. Never write a second version of a piece.
+- **Families share a base class.** `Activation`, `Loss`, `Optimizer`,
+  `Initialization` and `Normalization` are abstract. A new curve, loss, optimizer or starting
+  rule is a new subclass, never an `if` on a name. A new kind of layer is a
+  subclass of `Layer`, as `Normalization` is.
 - **Only what the idea needs.** No helpers for printing or drawing, no extra
   options. Keep each class as small as it can be and still be right.
 - **No loose functions** in the library. Ready made instances are fine
-  (`RELU`, `SIGMOID`).
-- Plain Python lists and `math`. No other packages.
+  (`RELU`, `SIGMOID`, `NO_LIMIT`, `NO_DECAY`, `NO_DROPOUT`, `NO_LAYERS`).
+- Plain Python lists, `math` and `random`. No other packages. Anything random
+  takes a `random.Random(seed)` that is passed in, so the same seed gives the
+  same numbers every run.
 - **Plain steps, not clever code.** The library is for seeing what happens,
   not for speed. Use `for` loops with an index, `if`, `append`, and `+ - * /`.
   Give each in between number a name (`total`, `miss`, `at_total`). No list
   comprehensions, `sum`, `zip`, `enumerate`, `max`, `**` or one line `if`
-  expressions. `math.exp`, `math.log` and `math.tanh` are fine. A short
-  comment may say what a step means.
+  expressions. `math.exp`, `math.log`, `math.sqrt` and `math.tanh` are fine.
+  A short comment may say what a step means.
 - Easy names a beginner can guess. One line docstring per class. Type hints.
   Files under about 100 lines.
 

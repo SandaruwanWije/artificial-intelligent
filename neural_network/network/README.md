@@ -2,7 +2,7 @@
 
 | Class | What it is |
 |-------|------------|
-| `Layer` | Neurons side by side. Every neuron gets the same inputs, and the layer gives one output per neuron. |
+| `Layer` | Neurons side by side. Every neuron gets the same inputs, and the layer gives one output per neuron. Training asks a layer four things, and a kind of layer can answer them in its own way: `inputs_of(n, inputs)`, what neuron `n` reads; `blame_on_inputs(inputs, blame_at_totals)`, how blame goes back to the inputs; and `see_inputs` and `see_blame`, which show it a whole batch. A plain layer has no use for the last two. |
 | `Network` | Layers in a row. Each layer's outputs are the next layer's inputs. `answer(inputs)` gives the last layer's outputs. |
 
 A hidden layer is what lets a network do what one neuron cannot. Two ReLU
@@ -20,7 +20,7 @@ xor.answer([1, 0])   # [1]
 xor.answer([1, 1])   # [0]
 ```
 
-Uses: `neuron`. Used by: `forward_pass`, `backpropagation`, `training`.
+Uses: `neuron`. Used by: `forward_pass`, `backpropagation`, `training`, `normalization`.
 
 Tests: `tests/test_network.py`. Article: [Layers and depth](https://byteblueprints.com/artificial-intelligence/ann/06_layers_depth/).
 
