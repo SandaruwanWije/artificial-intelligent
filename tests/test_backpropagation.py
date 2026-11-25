@@ -1,21 +1,17 @@
 from pytest import approx
 
-from neural_network.backpropagation import Backpropagation
+from neural_network.backpropagation import Backpropagation, FiniteDifference
 from neural_network.forward_pass import ForwardPass
 from neural_network.loss import SquaredError
 
 BACKPROPAGATION = Backpropagation(SquaredError())
 
 
-def loss_of(network, mango) -> float:
-    inputs, truths = mango
-    return SquaredError().total(ForwardPass(network, inputs).answer, truths)
-
-
 def test_the_mango_starts_with_a_loss_of_0_17(mango_network, mango, show):
     inputs, truths = mango
-    show("answer", mango_network.answer(inputs), "truth", truths, "-> loss", loss_of(mango_network, mango))
-    assert loss_of(mango_network, mango) == approx(0.1699, abs=0.0001)
+    loss = FiniteDifference(SquaredError()).loss_of(mango_network, inputs, truths)
+    show("answer", mango_network.answer(inputs), "truth", truths, "-> loss", loss)
+    assert loss == approx(0.1699, abs=0.0001)
 
 
 def test_the_blame_flows_back_one_layer_at_a_time(mango_network, mango, show):
@@ -49,14 +45,12 @@ def test_the_slope_of_every_weight_and_bias(mango_network, mango, show):
 
 
 def test_the_sweep_agrees_with_nudging_each_number_one_at_a_time(mango_network, mango, show):
-    slopes = BACKPROPAGATION.slopes(mango_network, *mango)
-    nudge = 1e-6
-    for layer, layer_slopes in zip(mango_network.layers, slopes):
-        for neuron, neuron_slopes in zip(layer.neurons, layer_slopes):
-            for i, slope in enumerate(neuron_slopes.weights):
-                before = loss_of(mango_network, mango)
-                neuron.weights[i] += nudge
-                felt = (loss_of(mango_network, mango) - before) / nudge
-                neuron.weights[i] -= nudge
-                assert slope == approx(felt, abs=1e-4)
-                show("weight", neuron.weights[i], "  sweep", slope, "  nudge", felt)
+    swept = BACKPROPAGATION.slopes(mango_network, *mango)
+    nudged = FiniteDifference(SquaredError()).slopes(mango_network, *mango)
+    for layer_number in range(len(swept)):
+        for n in range(len(swept[layer_number])):
+            sweep, nudge = swept[layer_number][n], nudged[layer_number][n]
+            show("layer", layer_number + 1, "neuron", n + 1, "  sweep", sweep.weights + [sweep.bias],
+                 "  nudge", nudge.weights + [nudge.bias])
+            assert sweep.weights == approx(nudge.weights, abs=1e-4)
+            assert sweep.bias == approx(nudge.bias, abs=1e-4)

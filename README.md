@@ -43,7 +43,7 @@ Add `-q` to see only the result.
 | [forward_pass](neural_network/forward_pass) | `ForwardPass`, `LayerStep` | Inputs through the network, keeping every step | [Forward pass](https://byteblueprints.com/artificial-intelligence/ann/07_forward_pass/) |
 | [loss](neural_network/loss) | `Loss`, `SquaredError`, `CrossEntropy` | How wrong the answer is, as one number | [Loss functions](https://byteblueprints.com/artificial-intelligence/ann/08_loss/) |
 | [gradient_descent](neural_network/gradient_descent) | `GradientDescent` | One step downhill, against the slope | [Gradient descent](https://byteblueprints.com/artificial-intelligence/ann/09_gradient_descent/) |
-| [backpropagation](neural_network/backpropagation) | `Backpropagation`, `NeuronSlopes` | The slope of every weight and bias, in one sweep backwards | [Part 1](https://byteblueprints.com/artificial-intelligence/ann/10_backprop/), [part 2](https://byteblueprints.com/artificial-intelligence/ann/10_backprop_2/) |
+| [backpropagation](neural_network/backpropagation) | `NeuronSlopes`, `FiniteDifference`, `Backpropagation` | The slope of every weight and bias: slowly by nudging, then in one sweep backwards | [Part 1](https://byteblueprints.com/artificial-intelligence/ann/10_backprop/), [part 2](https://byteblueprints.com/artificial-intelligence/ann/10_backprop_2/) |
 | [training](neural_network/training) | `Trainer` | Slopes, then a step, round after round | [Part 2](https://byteblueprints.com/artificial-intelligence/ann/10_backprop_2/) |
 
 See [CONVENTIONS.md](CONVENTIONS.md) for the rules every piece follows.

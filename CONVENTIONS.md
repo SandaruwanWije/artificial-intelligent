@@ -75,11 +75,22 @@ no test code, no test output, no run commands.
 
 1. One or two sentences: which piece this is and what it builds on.
 2. `## Where it is`: a short table of the classes and their files.
-3. `## Walk through the code`: one to five short steps. Each is a bold lead
+3. `## Walk through the code`: one step for every class the post adds, so
+   each one is explained, not only a few examples. Each is a bold lead
    in sentence or two in plain words, then code quoted **word for word** from
    `neural_network/`. Always show the `class` line a method belongs to: when
    the method is further down, write the class line, then a line with only
    `...`, then the method. With only one step, leave out its number.
+
+Write the math as formulas, not in words: `$...$` inside a sentence and
+`$$...$$` on lines of their own (the blog draws them with KaTeX). Use the
+usual symbols ($z$ for a total, $w_i$, $b$, $f(z)$, $\hat{y}$, $\eta$,
+$\partial L / \partial w$). Under each formula, a `Where:` list defines every
+symbol the tab has not defined yet: what it means in plain words, how to say
+a Greek letter or mark ($\eta$ is eta, $\hat{y}$ is "y hat"), and which code
+name holds it, for example "$\delta_j$ is the blame at the total,
+`at_total`". Keep the math's counting the same as the code's: Python counts
+from 0, so write $\sum_i$ "for every input $i$" rather than $\sum_{i=1}^{n}$.
 
 Plain language: short sentences, everyday words, no idioms, no dashes used
 as punctuation. Then check the tab. Every code block must be found in the
