@@ -1,6 +1,7 @@
 """Shared test pieces: the mango network, the crate of 24 mangoes, and `show`, which prints a test's steps under its name."""
 
 import math
+import os
 from random import Random
 
 import pytest
@@ -31,6 +32,32 @@ def mango_network() -> Network:
 def new_mango_network():
     """A function that builds one more mango network, for tests that train several from the same start."""
     return build_mango_network
+
+
+@pytest.fixture
+def as_arrays():
+    """A function that holds a plain mango network as arrays. Tests that use it are skipped without NumPy."""
+    pytest.importorskip("numpy")
+    from neural_network.arrays import ARRAY_RELU, ARRAY_SIGMOID, ArrayLayer, ArrayNetwork
+
+    def held_as_arrays(network: Network) -> ArrayNetwork:
+        hidden, output = network.layers
+        return ArrayNetwork([ArrayLayer(hidden, ARRAY_RELU), ArrayLayer(output, ARRAY_SIGMOID)])
+    return held_as_arrays
+
+
+MNIST_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "mnist.npz")
+
+
+@pytest.fixture
+def mnist():
+    """The MNIST file. Tests that use it are skipped until it has been downloaded to data/mnist.npz."""
+    pytest.importorskip("numpy")
+    from neural_network.digits import MnistFile
+
+    if not os.path.exists(MNIST_PATH):
+        pytest.skip("data/mnist.npz is not there: see neural_network/digits/README.md")
+    return MnistFile(MNIST_PATH)
 
 
 @pytest.fixture

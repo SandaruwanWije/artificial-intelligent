@@ -18,6 +18,9 @@ tests/
   test_<idea>.py    one file per idea, using the real pieces together
 tools/
   check_article.py  checks a blog post's Project tab against the code
+  export_*.py       train the digit reader and write the numbers the blog draws
+data/
+  mnist.npz         the MNIST pictures, fetched once and not part of the repo
 ```
 
 ## Classes
@@ -49,6 +52,46 @@ tools/
   A short comment may say what a step means.
 - Easy names a beginner can guess. One line docstring per class. Type hints.
   Files under about 100 lines.
+
+## The ideas that use a package
+
+Two ideas teach a tool, so they use it, and two more are built on the first
+of those. Everything else above still holds for them: classes, base classes
+for families (`ArrayActivation`, `ArrayLoss`, `Schedule`, `Search`), one line
+docstrings, type hints, named in between numbers, no loose functions, ready
+made instances (`ARRAY_RELU`, `ARRAY_SIGMOID`, `ARRAY_NO_BEND`).
+
+- **`arrays` uses NumPy.** Its point is that one line does a whole layer for
+  every example. So where the plain library has a loop over examples or
+  neurons, `arrays` has one whole array step: `@`, `.T`, `np.maximum`,
+  `np.exp`, `np.log`, `np.where`, `.sum(axis=0)`, `.shape`. It still loops over
+  the layers, and it still names each in between array (`totals`,
+  `at_totals`, `weight_slopes`).
+- **`libraries` uses PyTorch and Keras.** Its point is how little is left to
+  write, so its classes are written the way those libraries are normally
+  used: an `nn.Module` with a `forward`, a `keras.Sequential`.
+- **`digits` and `tuning` are the first real job, so they build on `arrays`.**
+  A network that reads handwritten digits has 50,890 numbers to learn from
+  50,000 pictures, which is far too slow with loops. The `DigitReader` is an
+  `ArrayNetwork` and the `BatchTrainer` is an `ArrayTrainer`. They use NumPy
+  the way `arrays` does, and the pieces of `tuning` that touch no array
+  (`CurveReading`, `Dial`, the searches) are plain Python in plain steps.
+- **They build on the plain pieces and are checked against them.** An
+  `ArrayLayer` is made from a `Layer`. The `ArrayTrainer` steps with
+  `GradientDescent`. `TorchNetwork` and `KerasNetwork` start from an
+  `ArrayNetwork`. A `DigitReader` gets its starting weights from `He` and
+  `Xavier`, and a `BatchTrainer` cuts its batches with `Shuffle` and
+  `Batches`. Their tests compare every answer, slope and loss with the
+  version before, or with a tiny nudge.
+- **No plain idea may import them.** The plain library must work with no
+  package installed. Each package sits in its own dependency group in
+  `pyproject.toml` (`arrays`, `libraries`), and the tests of these ideas are
+  skipped when their package is missing.
+- **Real data stays out of the repo.** `MnistFile` fetches the pictures into
+  `data/`, which git ignores. Tests that need them are skipped until the file
+  is there, and every other test builds its own small examples. A file under
+  `tools/` may run the library for a few minutes and write numbers for the
+  blog. The library itself still holds no program to run.
 
 ## The code stands on its own
 

@@ -1,8 +1,20 @@
 # artificial-intelligent
 
-A small neural network library in plain Python, with no other packages. It is
-built one idea at a time: each folder in `neural_network/` is one idea, with
-its own README. The pieces fit together into a network that learns.
+A small neural network library in plain Python. It is built one idea at a
+time: each folder in `neural_network/` is one idea, with its own README. The
+pieces fit together into a network that learns.
+
+The library itself needs no other packages. The last four ideas are the
+exception, on purpose: `arrays` builds the same network again with NumPy,
+`libraries` builds it with PyTorch and Keras, to show what those tools take
+over, and `digits` and `tuning` use the NumPy version to read handwritten
+digits. `uv sync` installs the packages too. They are large, so to leave them
+out run `uv sync --no-group arrays --no-group libraries`. The tests of those
+ideas are then skipped.
+
+`digits` and `tuning` learn from the MNIST pictures, a file of about 11 MB
+that is not part of the repo. [neural_network/digits](neural_network/digits)
+says how to fetch it. Until it is there, the tests that need it are skipped.
 
 ## Run the tests
 
@@ -55,5 +67,9 @@ Add `-q` to see only the result.
 | [gradient_clipping](neural_network/gradient_clipping) | `GradientClipping`, `NO_LIMIT` | A limit on how long all the slopes together may be | [Vanishing and exploding gradients](https://byteblueprints.com/artificial-intelligence/ann/17_gradients/) |
 | [normalization](neural_network/normalization) | `Normalization`, `LayerNorm`, `BatchNorm` | Layers that give a group of numbers a mean of 0 and a spread of 1, then a learned scale and shift | [Batch norm and layer norm](https://byteblueprints.com/artificial-intelligence/ann/18_normalization/) |
 | [training](neural_network/training) | `Trainer`, `Losses` | Slopes, then a step, batch after batch and epoch after epoch | [Part 2](https://byteblueprints.com/artificial-intelligence/ann/10_backprop_2/), [Learning rate, epochs, batch size](https://byteblueprints.com/artificial-intelligence/ann/11_hyperparameters/), [SGD, Momentum, RMSProp, Adam](https://byteblueprints.com/artificial-intelligence/ann/12_optimizers/), [Train, validation, test splits](https://byteblueprints.com/artificial-intelligence/ann/13_splits/), [Vanishing and exploding gradients](https://byteblueprints.com/artificial-intelligence/ann/17_gradients/) |
+| [arrays](neural_network/arrays) | `ExampleArrays`, `ArrayLayer`, `ArrayNetwork`, `ArrayForwardPass`, `ArrayBackpropagation`, `ArrayTrainer` | The same network held as NumPy arrays: a whole layer, for every example, in one line | [ANN from scratch in NumPy](https://byteblueprints.com/artificial-intelligence/ann/19_numpy_ann/) |
+| [libraries](neural_network/libraries) | `TorchNetwork`, `TorchSlopes`, `TorchTrainer`, `KerasNetwork` | The same network in PyTorch and in Keras, where the library finds the slopes | [Same network in PyTorch and Keras](https://byteblueprints.com/artificial-intelligence/ann/20_pytorch_ann/) |
+| [digits](neural_network/digits) | `MnistFile`, `DigitPictures`, `Softmax`, `SoftmaxCrossEntropy`, `DigitReader`, `BatchTrainer`, `Confusion` | A reader of handwritten digits: 784 inputs, ten scores, softmax, and steps on small batches | [MNIST digit classifier](https://byteblueprints.com/artificial-intelligence/ann/21_mnist/) |
+| [tuning](neural_network/tuning) | `CurveReading`, `Schedule`, `WarmUpThenDecay`, `ScheduledTrainer`, `RateRangeTest`, `Dial`, `GridSearch`, `RandomSearch` | What the loss curves say to fix, a quick test for the learning rate, a rate that changes, and two ways to search | [Tuning and reading loss curves](https://byteblueprints.com/artificial-intelligence/ann/22_tuning/) |
 
 See [CONVENTIONS.md](CONVENTIONS.md) for the rules every piece follows.
